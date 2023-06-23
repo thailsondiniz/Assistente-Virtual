@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   List<dynamic> apiListButtons = [];
   List<String> dropdownItems = ['Select'];
   String selectedValue = 'Select';
-
+  String selectedValue2 = 'Select';
   bool isSwitched = false;
   bool isSwitched2 = false;
 
@@ -126,8 +126,7 @@ class _HomePageState extends State<HomePage> {
                               },
                             );
                           },
-                          child: const SizedBox(
-                          ),
+                          child: const SizedBox(),
                         ),
                         Switch(
                           value: isSwitched,
@@ -368,10 +367,10 @@ class _HomePageState extends State<HomePage> {
                     color: Color(0xff46964a),
                   ),
                 ),
-                value: selectedValue,
+                value: selectedValue2,
                 onChanged: (value) {
                   setState(() {
-                    //selectedValue = value.toString();
+                    // selectedValue2 = 'select';
                   });
                 },
                 icon: const Icon(
