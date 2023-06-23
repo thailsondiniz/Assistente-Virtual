@@ -14,47 +14,39 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<dynamic> apiListButtons = [];
+  List<String> dropdownItems = ['Select'];
   String selectedValue = 'Select';
 
-  //VERIFICAÇÃO DOS SWITCH
   bool isSwitched = false;
   bool isSwitched2 = false;
 
   void conexaoButtons() async {
-  var url = Uri.parse('http://10.0.0.149:8000/api/buttons');
+    var url = Uri.parse('http://10.0.0.149:8000/api/buttons');
 
-  try {
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      var responseData = response.body;
-      if (responseData != null) {
-        var decodedData = json.decode(responseData);
-        if (decodedData['butoes'] is List) {
-          setState(() {
-            apiListButtons = List.from(decodedData['butoes']);
-            if (apiListButtons.isNotEmpty) {
-              selectedValue = apiListButtons[0]['butoes'];
-            }
-          });
-        } else {
-          print('Não são uma lista.');
-        }
+    try {
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        var decodedData = json.decode(response.body);
+        setState(() {
+          apiListButtons = List.from(decodedData['butoes']);
+          for (var item in apiListButtons) {
+            dropdownItems.add(item['nome'] as String);
+          }
+        });
       } else {
-        print('Resposta vazia.');
+        print('Erro na requisição. Código de status: ${response.statusCode}');
       }
-    } else {
-      print('Erro na requisição. Código de status: ${response.statusCode}');
+    } catch (error) {
+      print('Falha na requisição $error');
     }
-  } catch (error) {
-    print('Falha na requisição $error');
   }
-  print(apiListButtons);
-}
-@override
-void initState() {
-  super.initState();
-  // conexaoButtons();
-}
+
+  @override
+  void initState() {
+    super.initState();
+    conexaoButtons();
+  }
+
   @override
   Widget build(BuildContext context) {
     print(apiListButtons);
@@ -224,60 +216,63 @@ void initState() {
                     Expanded(
                       flex: 5,
                       child: SizedBox(
-                        height: 58,
-                        child: DropdownButtonFormField<dynamic>(
-                          padding: const EdgeInsets.only(left: 10),
-                          decoration: const InputDecoration(
-                            labelText: 'Select',
-                            labelStyle: TextStyle(
-                                color: Color(0xff46964a), fontSize: 17),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(70),
+                        height: 60,
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField<dynamic>(
+                            padding: const EdgeInsets.only(left: 10),
+                            dropdownColor: const Color(0xff424242),
+                            decoration: const InputDecoration(
+                              labelText: 'Select',
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(70),
+                                ),
+                                borderSide: BorderSide(
+                                  color: Color(0xffffffffff),
+                                ),
                               ),
-                              borderSide:
-                                  BorderSide(color: Color(0xffffffffff)),
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Color(0xffffffffff)),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(70),
+                              labelStyle: TextStyle(
+                                fontSize: 17,
+                                color: Color(0xff46964a),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(30)),
+                                borderSide: BorderSide(color: Colors.white),
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30),
+                                ),
+                              ),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: Color(0xff46964a),
                               ),
                             ),
-                            prefixIcon: Icon(
-                              Icons.search,
+                            value: selectedValue,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedValue = value.toString();
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.arrow_drop_down,
                               color: Color(0xff46964a),
                             ),
+                            isExpanded: true,
+                            elevation: 16,
+                            items: dropdownItems.map((item) {
+                              return DropdownMenuItem<dynamic>(
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                              );
+                            }).toList(),
                           ),
-                          value: selectedValue,
-                          dropdownColor: const Color(0xff424242),
-                          icon: const Icon(
-                            Icons.arrow_drop_down,
-                            color: Color(0xff46964a),
-                          ),
-                          isExpanded: true,
-                          elevation: 16,
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
-                          onChanged: (value) {
-                            setState(
-                              () {
-                                selectedValue = value;
-                              },
-                            );
-                          },
-                          items: apiListButtons.map((item) {
-                            return DropdownMenuItem<dynamic>(
-                              value: item,
-                              child: Text(
-                                item[
-                                    'butoes'],
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            );
-                          }).toList(),
                         ),
                       ),
                     ), //FIM DO EXPANDED DO PRIMEIRO DROPDOWN
@@ -313,165 +308,6 @@ void initState() {
                     //FIM CONTAINER DE EDIÇÃO DO DROPDOWN 1
                   ],
                 ),
-                //INICIO TEMPLATE DROPDOWN 2
-                //RECOMENDÇÕES GERAL DO TEMPLATE DE RECOMENDAÇÕES
-                Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(right: 20, left: 15, top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '# Buttons',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 15),
-                          child: Text(
-                            textAlign: TextAlign.end,
-                            '1',
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(left: 15),
-                          height: 50,
-                          width: 255,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white),
-                              borderRadius: BorderRadius.circular(40)),
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                'lib/image/icon.png',
-                                width: 20,
-                                height: 20,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              // Text(
-                              //   texto1,
-                              //   style: const TextStyle(color: Colors.white),
-                              // ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.delete_forever,
-                            color: Color(0xffF14D4D),
-                            size: 30,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ButtonSettings(),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.edit,
-                              color: Colors.white, size: 30),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 15),
-                          child: Text(
-                            textAlign: TextAlign.end,
-                            '2',
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(left: 15),
-                          height: 50,
-                          width: 255,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white),
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                'lib/image/icon.png',
-                                width: 20,
-                                height: 20,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              // Text(
-                              //   texto2,
-                              //   style: const TextStyle(color: Colors.white),
-                              // ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.delete_forever,
-                            color: Color(0xffF14D4D),
-                            size: 30,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ButtonSettings(),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.edit,
-                              color: Colors.white, size: 30),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 80,
-                    )
-                  ],
-                ),
-
-                //FIM DAS RECOMENDAÇÕES
               ],
             ),
           ),
@@ -480,3 +316,172 @@ void initState() {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////
+//RECOMENDÇÕES GERAL DO TEMPLATE DE RECOMENDAÇÕES
+                // Column(
+                //   children: [
+                //     const Padding(
+                //       padding: EdgeInsets.only(right: 20, left: 15, top: 20),
+                //       child: Row(
+                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //         children: [
+                //           Text(
+                //             '# Buttons',
+                //             style: TextStyle(
+                //                 color: Colors.white,
+                //                 fontSize: 18,
+                //                 fontWeight: FontWeight.bold),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //     const SizedBox(
+                //       height: 15,
+                //     ),
+                //     Row(
+                //       children: [
+                //         const Padding(
+                //           padding: EdgeInsets.only(left: 15),
+                //           child: Text(
+                //             textAlign: TextAlign.end,
+                //             '1',
+                //             style: TextStyle(
+                //                 fontSize: 18,
+                //                 color: Colors.white,
+                //                 fontWeight: FontWeight.bold),
+                //           ),
+                //         ),
+                //         const SizedBox(
+                //           width: 15,
+                //         ),
+                //         Container(
+                //           padding: const EdgeInsets.only(left: 15),
+                //           height: 50,
+                //           width: 255,
+                //           decoration: BoxDecoration(
+                //               border: Border.all(color: Colors.white),
+                //               borderRadius: BorderRadius.circular(40)),
+                //           child: Row(
+                //             children: [
+                //               Image.asset(
+                //                 'lib/image/icon.png',
+                //                 width: 20,
+                //                 height: 20,
+                //               ),
+                //               const SizedBox(
+                //                 width: 10,
+                //               ),
+                //               // Text(
+                //               //   texto1,
+                //               //   style: const TextStyle(color: Colors.white),
+                //               // ),
+                //             ],
+                //           ),
+                //         ),
+                //         IconButton(
+                //           onPressed: () {},
+                //           icon: const Icon(
+                //             Icons.delete_forever,
+                //             color: Color(0xffF14D4D),
+                //             size: 30,
+                //           ),
+                //         ),
+                //         IconButton(
+                //           onPressed: () {
+                //             Navigator.push(
+                //               context,
+                //               MaterialPageRoute(
+                //                 builder: (context) => const ButtonSettings(),
+                //               ),
+                //             );
+                //           },
+                //           icon: const Icon(Icons.edit,
+                //               color: Colors.white, size: 30),
+                //         ),
+                //       ],
+                //     ),
+                //   ],
+                // ),
+                // Column(
+                //   children: [
+                //     const SizedBox(height: 15),
+                //     Row(
+                //       children: [
+                //         const Padding(
+                //           padding: EdgeInsets.only(left: 15),
+                //           child: Text(
+                //             textAlign: TextAlign.end,
+                //             '2',
+                //             style: TextStyle(
+                //                 fontSize: 18,
+                //                 color: Colors.white,
+                //                 fontWeight: FontWeight.bold),
+                //           ),
+                //         ),
+                //         const SizedBox(
+                //           width: 15,
+                //         ),
+                //         Container(
+                //           padding: const EdgeInsets.only(left: 15),
+                //           height: 50,
+                //           width: 255,
+                //           decoration: BoxDecoration(
+                //             border: Border.all(color: Colors.white),
+                //             borderRadius: BorderRadius.circular(40),
+                //           ),
+                //           child: Row(
+                //             children: [
+                //               Image.asset(
+                //                 'lib/image/icon.png',
+                //                 width: 20,
+                //                 height: 20,
+                //               ),
+                //               const SizedBox(
+                //                 width: 10,
+                //               ),
+                //               // Text(
+                //               //   texto2,
+                //               //   style: const TextStyle(color: Colors.white),
+                //               // ),
+                //             ],
+                //           ),
+                //         ),
+                //         IconButton(
+                //           onPressed: () {},
+                //           icon: const Icon(
+                //             Icons.delete_forever,
+                //             color: Color(0xffF14D4D),
+                //             size: 30,
+                //           ),
+                //         ),
+                //         IconButton(
+                //           onPressed: () {
+                //             Navigator.push(
+                //               context,
+                //               MaterialPageRoute(
+                //                 builder: (context) => const ButtonSettings(),
+                //               ),
+                //             );
+                //           },
+                //           icon: const Icon(Icons.edit,
+                //               color: Colors.white, size: 30),
+                //         ),
+                //       ],
+                //     ),
+                //     const SizedBox(
+                //       height: 80,
+                //     )
+                //   ],
+                // ),
