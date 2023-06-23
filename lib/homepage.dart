@@ -127,7 +127,6 @@ class _HomePageState extends State<HomePage> {
                             );
                           },
                           child: const SizedBox(
-                            height: 0,
                           ),
                         ),
                         Switch(
@@ -277,6 +276,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ), //FIM DO EXPANDED DO PRIMEIRO DROPDOWN
                     // INICIO DO CONTAINER DE EDIÇÃO DO DROPDOWN 1
+
                     Container(
                       child: IconButton(
                         onPressed: () {
@@ -308,15 +308,125 @@ class _HomePageState extends State<HomePage> {
                     //FIM CONTAINER DE EDIÇÃO DO DROPDOWN 1
                   ],
                 ),
+                const SizedBox(
+                  height: 15,
+                )
               ],
             ),
           ),
+          selectedValue == 'Sou cliente' ? segundaSessao() : Container(),
         ],
       ),
     );
   }
-}
 
+  Widget segundaSessao() {
+    return Row(
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 15),
+          child: Text(
+            textAlign: TextAlign.end,
+            '2',
+            style: TextStyle(
+                fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          flex: 5,
+          child: SizedBox(
+            height: 60,
+            child: DropdownButtonHideUnderline(
+              child: DropdownButtonFormField<dynamic>(
+                padding: const EdgeInsets.only(left: 10),
+                dropdownColor: const Color(0xff424242),
+                decoration: const InputDecoration(
+                  labelText: 'Select',
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(70),
+                    ),
+                    borderSide: BorderSide(
+                      color: Color(0xffffffffff),
+                    ),
+                  ),
+                  labelStyle: TextStyle(
+                    fontSize: 17,
+                    color: Color(0xff46964a),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(30),
+                    ),
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Color(0xff46964a),
+                  ),
+                ),
+                value: selectedValue,
+                onChanged: (value) {
+                  setState(() {
+                    //selectedValue = value.toString();
+                  });
+                },
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: Color(0xff46964a),
+                ),
+                isExpanded: true,
+                elevation: 16,
+                items: dropdownItems.map((item) {
+                  return DropdownMenuItem<dynamic>(
+                    value: item,
+                    child: Text(
+                      item,
+                      style: const TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ), //FIM DO EXPANDED DO PRIMEIRO DROPDOWN
+        // INICIO DO CONTAINER DE EDIÇÃO DO DROPDOWN 1
+
+        Container(
+          child: IconButton(
+            onPressed: () {
+              setState(
+                () {},
+              );
+            },
+            icon: const Icon(
+              Icons.refresh,
+              color: Colors.white,
+              size: 30,
+            ),
+          ),
+        ),
+        Container(
+          child: IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const widgetOneEdit(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.edit, color: Colors.white, size: 30),
+          ),
+        ),
+        //FIM CONTAINER DE EDIÇÃO DO DROPDOWN 1
+      ],
+    );
+  }
+}
 
 
 
