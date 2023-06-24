@@ -17,6 +17,10 @@ class _HomePageState extends State<HomePage> {
   List<String> dropdownItems = ['Select'];
   String selectedValue = 'Select';
   String selectedValue2 = 'Select';
+
+  List<dynamic> listaFilhos = [];
+  String? selectedFilho;
+
   bool isSwitched = false;
   bool isSwitched2 = false;
 
@@ -32,6 +36,7 @@ class _HomePageState extends State<HomePage> {
           for (var item in apiListButtons) {
             dropdownItems.add(item['nome'] as String);
           }
+          print(listaFilhos);
         });
       } else {
         print('Erro na requisição. Código de status: ${response.statusCode}');
@@ -41,12 +46,41 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+void conexaoButtons2() async {
+  var url = Uri.parse('http://10.0.0.149:8000/api/buttons');
+
+  try {
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var decodedData = json.decode(response.body);
+      setState(() {
+        var buttons = decodedData['butoes'] as List<dynamic>;
+        for (var button in buttons) {
+          if (button.containsKey('filhos')) {
+            var filhos = button['filhos'] as Map<String, dynamic>;
+            listaFilhos.addAll(filhos.keys);
+          }
+        }
+      });
+    } else {
+      print('Erro na requisição. Código de status: ${response.statusCode}');
+    }
+  } catch (error) {
+    print('Falha na requisição $error');
+  }
+}
+
   @override
   void initState() {
     super.initState();
     conexaoButtons();
+    conexaoButtons2();
   }
-
+ void resetDropdown() {
+    setState(() {
+      selectedValue = 'Select';
+    });
+  }
   @override
   Widget build(BuildContext context) {
     print(apiListButtons);
@@ -278,11 +312,7 @@ class _HomePageState extends State<HomePage> {
 
                     Container(
                       child: IconButton(
-                        onPressed: () {
-                          setState(
-                            () {},
-                          );
-                        },
+                        onPressed: resetDropdown,
                         icon: const Icon(
                           Icons.refresh,
                           color: Colors.white,
@@ -367,11 +397,16 @@ class _HomePageState extends State<HomePage> {
                     color: Color(0xff46964a),
                   ),
                 ),
-                value: selectedValue2,
-                onChanged: (value) {
+                value: selectedFilho,
+                onChanged: (selectedFilho) {
                   setState(() {
                     // selectedValue2 = 'select';
+                    //  selectedFilho = 'Select';
+                    //  selectedValue = newValue.toString();
                   });
+
+
+                   
                 },
                 icon: const Icon(
                   Icons.arrow_drop_down,
@@ -379,11 +414,11 @@ class _HomePageState extends State<HomePage> {
                 ),
                 isExpanded: true,
                 elevation: 16,
-                items: dropdownItems.map((item) {
+                items: listaFilhos.map((filho) {
                   return DropdownMenuItem<dynamic>(
-                    value: item,
+                    value: filho,
                     child: Text(
-                      item,
+                      filho,
                       style: const TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   );
@@ -396,11 +431,7 @@ class _HomePageState extends State<HomePage> {
 
         Container(
           child: IconButton(
-            onPressed: () {
-              setState(
-                () {},
-              );
-            },
+            onPressed: resetDropdown,
             icon: const Icon(
               Icons.refresh,
               color: Colors.white,
