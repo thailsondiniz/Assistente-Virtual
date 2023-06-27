@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:wellu_project/screens/chats.dart';
 import 'package:wellu_project/screens/settings.dart';
 
 class Home extends StatefulWidget {
@@ -14,10 +15,7 @@ class _HomeState extends State<Home> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Home',
-      style: optionStyle,
-    ),
+    Chats(),
     Text(
       'Users',
       style: optionStyle,

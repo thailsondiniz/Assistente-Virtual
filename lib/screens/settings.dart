@@ -21,7 +21,7 @@
 // }
 
 import 'package:flutter/material.dart';
-import 'package:wellu_project/homepage.dart';
+import 'package:wellu_project/screens/assistentVirtual.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});

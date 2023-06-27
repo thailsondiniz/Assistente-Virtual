@@ -10,7 +10,12 @@ class Menu extends StatefulWidget {
 button(buttonName) {
   return ElevatedButton(
     onPressed: () {},
-    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xff848484),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20)
+      )
+    ),
     child: Text(buttonName),
   );
 }
@@ -26,7 +31,6 @@ class _MenuState extends State<Menu> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff424242),
-        leading: const Icon(Icons.arrow_back),
         title: const ListTile(
           leading: CircleAvatar(
             backgroundColor: Colors.white,
