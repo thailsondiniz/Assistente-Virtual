@@ -1,9 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:wellu_project/widget/buttonSettings.dart';
-import 'package:wellu_project/widget/widgetOne.dart';
-import 'package:wellu_project/widget/widgetSupport.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+
+import 'package:flutter/material.dart';
+import 'package:wellu_project/screens/menu.dart';
+import 'package:wellu_project/services/api.dart';
+import 'package:wellu_project/widget/buttonSettings.dart';
+import 'package:wellu_project/widget/cabecalho.dart';
+import 'package:wellu_project/widget/recomendacaoWidget.dart';
+import 'package:wellu_project/widget/widgetOne.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,13 +19,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<dynamic> apiListButtons = [];
-  List<dynamic> dropdownItems = ['Select'];
+  List<String> dropdownItems = ['Select'];
+  List<dynamic> sessaoList = [];
   String selectedValue = 'Select';
   // String selectedValue2 = 'Select';
 
   List<dynamic> recomendacao = [];
 
   List<dynamic> listaFilhos = [];
+
+  List<dynamic> filhoswidges = [];
+
   String? selectedFilho;
 
   List<dynamic> listaFinanceiro = [];
@@ -29,82 +38,21 @@ class _HomePageState extends State<HomePage> {
   bool isSwitched = false;
   bool isSwitched2 = false;
 
-  void conexaoButtons() async {
-    var url = Uri.parse('http://10.0.0.149:8000/api/buttons');
+  List<String> id = [];
+  List<String> nome = [];
+  var data;
 
-    try {
-      var response = await http.get(url);
-      if (response.statusCode == 200) {
-        var decodedData = json.decode(response.body);
-        setState(() {
-          apiListButtons = List.from(decodedData['butoes']);
-          for (var item in apiListButtons) {
-            dropdownItems.add(item['nome'] as String);
-          }
-          // print(listaFilhos);
-        });
-      } else {
-        print('Erro na requisição. Código de status: ${response.statusCode}');
+  fetchButtons() async {
+    final apiUrl = Uri.parse('http://10.0.0.149:8000/api/buttons');
+    final response = await http.get(apiUrl);
+    data = json.decode(response.body);
+    setState(() {
+      for (var element in data['butoes']) {
+        dropdownItems.add(element['nome']);
+        id.add(element['id']);
+        recomendacao.add(element['nome']);
       }
-    } catch (error) {
-      print('Falha na requisição $error');
-    }
-  }
-
-  void conexaoButtons2() async {
-    var url = Uri.parse('http://10.0.0.149:8000/api/buttons');
-    try {
-      var response = await http.get(url);
-      if (response.statusCode == 200) {
-        var decodedData = json.decode(response.body);
-        setState(() {
-          var buttons = decodedData['butoes'] as List<dynamic>;
-          for (var button in buttons) {
-            if (button.containsKey('filhos')) {
-              var filhos = button['filhos'] as Map<String, dynamic>;
-              listaFilhos.addAll(filhos.keys);
-            }
-          }
-        });
-      } else {
-        print('Erro na requisição. Código de status: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Falha na requisição $error');
-    }
-  }
-
-  void conexaoButtons3() async {
-    var url = Uri.parse('http://10.0.0.149:8000/api/buttons');
-    try {
-      var response = await http.get(url);
-      if (response.statusCode == 200) {
-        var decodedData = json.decode(response.body);
-        var buttons = decodedData['butoes'] as List<dynamic>;
-
-        if (buttons.isNotEmpty &&
-            buttons[0]['filhos'] != null &&
-            buttons[0]['filhos']['Financeiro'] != null) {
-          var financeiro = buttons[0]['filhos']['Financeiro'] as List<dynamic>;
-          listaFinanceiro = financeiro.cast<String>();
-        } else {
-          print('Chave "Financeiro" não encontrada.');
-        }
-      } else {
-        print('Erro na requisição. Código de status: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Falha na requisição $error');
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    conexaoButtons();
-    conexaoButtons2();
-    conexaoButtons3();
-    print(listaFinanceiro);
+    });
   }
 
   void resetDropdown() {
@@ -114,23 +62,15 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  teste() {
-    setState(() {
-      recomendacao = dropdownItems;
-      if (selectedValue == 'Sou cliente') {
-        recomendacao = listaFilhos;
-      } else if (selectedValue == 'Saber mais') {
-        recomendacao = [];
-      } else if (selectedValue == 'Financeiro') {
-        recomendacao = listaFinanceiro;
-      }
-    });
+  @override
+  void initState() {
+    super.initState();
+    // requisicao();
+    fetchButtons();
   }
 
   @override
   Widget build(BuildContext context) {
-    // print(apiListButtons);
-    teste();
     return Scaffold(
       floatingActionButton: Container(
         decoration: BoxDecoration(
@@ -165,121 +105,7 @@ class _HomePageState extends State<HomePage> {
             Center(
               child: Column(
                 children: [
-                  const SizedBox(height: 20),
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: const Color(0x99535353),
-                    ),
-                    child: SizedBox(
-                      width: 90,
-                      height: 90,
-                      child: Image.network(
-                        'https://storage.googleapis.com/ecdt-logo-saida/aefd69d060e1a63cd12399d373de74e042f9ccaa0cd56d49664c8919ca853e3e/VELOCITYNET-TELECOM.webp',
-                        //scale:0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text(
-                    'Configure your virtual assistant menus here',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                  //FIM DO TEMPLATE FOTO
-                  // DROPDOWN 1  ESTILIZAÇÃO
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          const Text(
-                            'Activated',
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(
-                                () {
-                                  isSwitched = !isSwitched;
-                                },
-                              );
-                            },
-                            child: const SizedBox(),
-                          ),
-                          Switch(
-                            value: isSwitched,
-                            activeColor: Colors.white,
-                            onChanged: (value) {
-                              setState(() {
-                                isSwitched = value;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          const Text(
-                            'Just greeting message?',
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(
-                                () {
-                                  isSwitched2 = !isSwitched2;
-                                },
-                              );
-                            },
-                            child: const SizedBox(
-                              height: 0,
-                            ),
-                          ),
-                          Switch(
-                            value: isSwitched2,
-                            activeColor: Colors.white,
-                            onChanged: (value) {
-                              setState(
-                                () {
-                                  isSwitched2 = value;
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: 18.0, top: 5, bottom: 20),
-                        child: Text(
-                          '# Menus',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 12.0, top: 5),
-                        child: Text(
-                          'Actions',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
+                  const Cabecalho(),
                   Row(
                     children: [
                       const Padding(
@@ -334,6 +160,28 @@ class _HomePageState extends State<HomePage> {
                               onChanged: (value) {
                                 setState(() {
                                   selectedValue = value.toString();
+
+                                  if (dropdownItems.contains(selectedValue)) {
+                                            recomendacao.clear();
+
+                                    for (var element in data['butoes']) {
+                                      if (element['filhos'] != null) {
+                                        for (var filhos in element['filhos']) {
+                                          if (filhos['id_pai'] ==
+                                                  element['id'] &&
+                                              selectedValue ==
+                                                  element['nome']) {
+                                            recomendacao
+                                                .add(filhos['nome_filho']);
+                                          } else {}
+                                        }
+                                        sessaoList = recomendacao;
+                                      }
+                                    }
+                                  }
+                                  if (selectedValue == 'Select') {
+                                    return;
+                                  }
                                 });
                               },
                               icon: const Icon(
@@ -356,33 +204,26 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ), //FIM DO EXPANDED DO PRIMEIRO DROPDOWN
-                      // INICIO DO CONTAINER DE EDIÇÃO DO DROPDOWN 1
-
-                      Container(
-                        child: IconButton(
-                          onPressed: resetDropdown,
-                          icon: const Icon(
-                            Icons.refresh,
-                            color: Colors.white,
-                            size: 30,
-                          ),
+                      IconButton(
+                        onPressed: resetDropdown,
+                        icon: const Icon(
+                          Icons.refresh,
+                          color: Colors.white,
+                          size: 30,
                         ),
                       ),
-                      Container(
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const widgetOneEdit(),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.edit,
-                              color: Colors.white, size: 30),
-                        ),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const widgetOneEdit(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.edit,
+                            color: Colors.white, size: 30),
                       ),
-                      //FIM CONTAINER DE EDIÇÃO DO DROPDOWN 1
                     ],
                   ),
                   const SizedBox(
@@ -391,11 +232,10 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            selectedValue == 'Sou cliente' ? segundaSessao() : Container(),
+            sessaoList.isEmpty ? Container() : sessao(),
             const SizedBox(
               height: 15,
             ),
-            selectedFilho == 'Financeiro' ? terceiraSessao() : Container(),
 
             //recomendações
             const Column(
@@ -420,25 +260,16 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            // selectedValue == 'Select' ? recomendacaoOne() : Container(),
-            // selectedValue == 'Select' ? recomendacaoTwo() : Container(),
-            // selectedValue == 'Select'
-            //     ? recomendacaoWidget(dropdownItems[0])
-            //     : Container(),
-            // for (var element in dropdownItems) {
-            //   recomendacaoWidget(element);
-            // };
-
             ...recomendacao.map((e) {
               return recomendacaoWidget(e);
-            }).skip(1)
+            })
           ],
         ),
       ),
     );
   }
 
-  Widget segundaSessao() {
+  Widget sessao() {
     return Row(
       children: [
         const Padding(
@@ -498,7 +329,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 isExpanded: true,
                 elevation: 16,
-                items: listaFilhos.map((filho) {
+                items: sessaoList.map((filho) {
                   return DropdownMenuItem<dynamic>(
                     value: filho,
                     child: Text(
@@ -538,378 +369,205 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget terceiraSessao() {
-    if (listaFinanceiro.isEmpty) {
-      return const SizedBox();
-    }
-    return Row(
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 15),
-          child: Text(
-            textAlign: TextAlign.end,
-            '3',
-            style: TextStyle(
-                fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Expanded(
-          flex: 5,
-          child: SizedBox(
-            height: 60,
-            child: DropdownButtonHideUnderline(
-              child: DropdownButtonFormField<dynamic>(
-                padding: const EdgeInsets.only(left: 10),
-                dropdownColor: const Color(0xff424242),
-                decoration: const InputDecoration(
-                  labelText: 'Select',
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(70),
-                    ),
-                    borderSide: BorderSide(
-                      color: Color(0xffffffffff),
-                    ),
-                  ),
-                  labelStyle: TextStyle(
-                    fontSize: 17,
-                    color: Color(0xff46964a),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(30),
-                    ),
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Color(0xff46964a),
-                  ),
-                ),
-                value: selectedFinanceiro,
-                onChanged: (value) {
-                  setState(() {
-                    selectedFinanceiro = value;
-                  });
-                },
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: Color(0xff46964a),
-                ),
-                isExpanded: true,
-                elevation: 16,
-                items: listaFinanceiro.map((item) {
-                  return DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: const TextStyle(fontSize: 16, color: Colors.white),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        ),
-        Container(
-          child: IconButton(
-            onPressed: resetDropdown,
-            icon: const Icon(
-              Icons.refresh,
-              color: Colors.white,
-              size: 30,
-            ),
-          ),
-        ),
-        Container(
-          child: IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const widgetOneEdit(),
-                ),
-              );
-            },
-            icon: const Icon(Icons.edit, color: Colors.white, size: 30),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget recomendacaoWidget(recomedantion) {
-    return Row(
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 15),
-          child: Text(
-            textAlign: TextAlign.end,
-            '1',
-            style: TextStyle(
-                fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(
-          width: 15,
-        ),
-        Container(
-          padding: const EdgeInsets.only(left: 15),
-          height: 50,
-          width: 255,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.white),
-              borderRadius: BorderRadius.circular(40)),
-          child: Row(
-            children: [
-              Image.asset(
-                'lib/image/icon.png',
-                width: 20,
-                height: 20,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                recomedantion,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ],
-          ),
-        ),
-        IconButton(
-          onPressed: () {
-            // print(dropdownItems);
-          },
-          icon: const Icon(
-            Icons.delete_forever,
-            color: Color(0xffF14D4D),
-            size: 30,
-          ),
-        ),
-        IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ButtonSettings(),
-              ),
-            );
-          },
-          icon: const Icon(Icons.edit, color: Colors.white, size: 30),
-        ),
-      ],
-    );
-  }
-
-  // Widget recomendacaoTwo() {
-  //   return Column(
+  // Widget segundaSessao() {
+  //   return Row(
   //     children: [
-  //       const SizedBox(height: 15),
-  //       Row(
-  //         children: [
-  //           const Padding(
-  //             padding: EdgeInsets.only(left: 15),
-  //             child: Text(
-  //               textAlign: TextAlign.end,
-  //               '2',
-  //               style: TextStyle(
-  //                   fontSize: 18,
-  //                   color: Colors.white,
-  //                   fontWeight: FontWeight.bold),
+  //       const Padding(
+  //         padding: EdgeInsets.only(left: 15),
+  //         child: Text(
+  //           textAlign: TextAlign.end,
+  //           '2',
+  //           style: TextStyle(
+  //               fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+  //         ),
+  //       ),
+  //       Expanded(
+  //         flex: 5,
+  //         child: SizedBox(
+  //           height: 60,
+  //           child: DropdownButtonHideUnderline(
+  //             child: DropdownButtonFormField<dynamic>(
+  //               padding: const EdgeInsets.only(left: 10),
+  //               dropdownColor: const Color(0xff424242),
+  //               decoration: const InputDecoration(
+  //                 labelText: 'Select',
+  //                 enabledBorder: OutlineInputBorder(
+  //                   borderRadius: BorderRadius.all(
+  //                     Radius.circular(70),
+  //                   ),
+  //                   borderSide: BorderSide(
+  //                     color: Color(0xffffffffff),
+  //                   ),
+  //                 ),
+  //                 labelStyle: TextStyle(
+  //                   fontSize: 17,
+  //                   color: Color(0xff46964a),
+  //                 ),
+  //                 focusedBorder: OutlineInputBorder(
+  //                   borderRadius: BorderRadius.all(Radius.circular(30)),
+  //                   borderSide: BorderSide(color: Colors.white),
+  //                 ),
+  //                 border: OutlineInputBorder(
+  //                   borderRadius: BorderRadius.all(
+  //                     Radius.circular(30),
+  //                   ),
+  //                 ),
+  //                 prefixIcon: Icon(
+  //                   Icons.search,
+  //                   color: Color(0xff46964a),
+  //                 ),
+  //               ),
+  //               value: selectedFilho,
+  //               onChanged: (value) {
+  //                 setState(() {
+  //                   selectedFilho = value.toString();
+  //                   recomendacao = listaFinanceiro;
+  //                   print(recomendacao);
+  //                   // print(listaFinanceiro);
+  //                   print(selectedFilho);
+  //                 });
+  //               },
+  //               icon: const Icon(
+  //                 Icons.arrow_drop_down,
+  //                 color: Color(0xff46964a),
+  //               ),
+  //               isExpanded: true,
+  //               elevation: 16,
+  //               items: listaFilhos.map((filho) {
+  //                 return DropdownMenuItem<dynamic>(
+  //                   value: filho,
+  //                   child: Text(
+  //                     filho,
+  //                     style: const TextStyle(fontSize: 16, color: Colors.white),
+  //                   ),
+  //                 );
+  //               }).toList(),
   //             ),
   //           ),
-  //           const SizedBox(
-  //             width: 15,
+  //         ),
+  //       ),
+  //       Container(
+  //         child: IconButton(
+  //           onPressed: () {},
+  //           icon: const Icon(
+  //             Icons.refresh,
+  //             color: Colors.white,
+  //             size: 30,
   //           ),
-  //           Container(
-  //             padding: const EdgeInsets.only(left: 15),
-  //             height: 50,
-  //             width: 255,
-  //             decoration: BoxDecoration(
-  //               border: Border.all(color: Colors.white),
-  //               borderRadius: BorderRadius.circular(40),
-  //             ),
-  //             child: Row(
-  //               children: [
-  //                 Image.asset(
-  //                   'lib/image/icon.png',
-  //                   width: 20,
-  //                   height: 20,
-  //                 ),
-  //                 const SizedBox(
-  //                   width: 10,
-  //                 ),
-  //                 Text(
-  //                   listaFilhos[2],
-  //                   style: const TextStyle(color: Colors.white),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //           IconButton(
-  //             onPressed: () {},
-  //             icon: const Icon(
-  //               Icons.delete_forever,
-  //               color: Color(0xffF14D4D),
-  //               size: 30,
-  //             ),
-  //           ),
-  //           IconButton(
-  //             onPressed: () {
-  //               Navigator.push(
-  //                 context,
-  //                 MaterialPageRoute(
-  //                   builder: (context) => const ButtonSettings(),
-  //                 ),
-  //               );
-  //             },
-  //             icon: const Icon(Icons.edit, color: Colors.white, size: 30),
-  //           ),
-  //         ],
+  //         ),
+  //       ),
+  //       Container(
+  //         child: IconButton(
+  //           onPressed: () {
+  //             Navigator.push(
+  //               context,
+  //               MaterialPageRoute(
+  //                 builder: (context) => const widgetOneEdit(),
+  //               ),
+  //             );
+  //           },
+  //           icon: const Icon(Icons.edit, color: Colors.white, size: 30),
+  //         ),
   //       ),
   //     ],
   //   );
   // }
 
-  // Widget recomendacaoThree() {
-  //   return Column(
+  // Widget terceiraSessao() {
+  //   return Row(
   //     children: [
-  //       const SizedBox(height: 15),
-  //       Row(
-  //         children: [
-  //           const Padding(
-  //             padding: EdgeInsets.only(left: 15),
-  //             child: Text(
-  //               textAlign: TextAlign.end,
-  //               '3',
-  //               style: TextStyle(
-  //                   fontSize: 18,
-  //                   color: Colors.white,
-  //                   fontWeight: FontWeight.bold),
-  //             ),
-  //           ),
-  //           const SizedBox(
-  //             width: 15,
-  //           ),
-  //           Container(
-  //             padding: const EdgeInsets.only(left: 15),
-  //             height: 50,
-  //             width: 255,
-  //             decoration: BoxDecoration(
-  //               border: Border.all(color: Colors.white),
-  //               borderRadius: BorderRadius.circular(40),
-  //             ),
-  //             child: Row(
-  //               children: [
-  //                 Image.asset(
-  //                   'lib/image/icon.png',
-  //                   width: 20,
-  //                   height: 20,
-  //                 ),
-  //                 const SizedBox(
-  //                   width: 10,
-  //                 ),
-  //                 Text(
-  //                   listaFilhos[3],
-  //                   style: const TextStyle(color: Colors.white),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //           IconButton(
-  //             onPressed: () {},
-  //             icon: const Icon(
-  //               Icons.delete_forever,
-  //               color: Color(0xffF14D4D),
-  //               size: 30,
-  //             ),
-  //           ),
-  //           IconButton(
-  //             onPressed: () {
-  //               Navigator.push(
-  //                 context,
-  //                 MaterialPageRoute(
-  //                   builder: (context) => const ButtonSettings(),
-  //                 ),
-  //               );
-  //             },
-  //             icon: const Icon(Icons.edit, color: Colors.white, size: 30),
-  //           ),
-  //         ],
+  //       const Padding(
+  //         padding: EdgeInsets.only(left: 15),
+  //         child: Text(
+  //           textAlign: TextAlign.end,
+  //           '3',
+  //           style: TextStyle(
+  //               fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+  //         ),
   //       ),
-  //     ],
-  //   );
-  // }
-
-  // Widget recomendacaoFour() {
-  //   return Column(
-  //     children: [
-  //       const SizedBox(height: 15),
-  //       Row(
-  //         children: [
-  //           const Padding(
-  //             padding: EdgeInsets.only(left: 15),
-  //             child: Text(
-  //               textAlign: TextAlign.end,
-  //               '4',
-  //               style: TextStyle(
-  //                   fontSize: 18,
-  //                   color: Colors.white,
-  //                   fontWeight: FontWeight.bold),
+  //       Expanded(
+  //         flex: 5,
+  //         child: SizedBox(
+  //           height: 60,
+  //           child: DropdownButtonHideUnderline(
+  //             child: DropdownButtonFormField<dynamic>(
+  //               padding: const EdgeInsets.only(left: 10),
+  //               dropdownColor: const Color(0xff424242),
+  //               decoration: const InputDecoration(
+  //                 labelText: 'Select',
+  //                 enabledBorder: OutlineInputBorder(
+  //                   borderRadius: BorderRadius.all(
+  //                     Radius.circular(70),
+  //                   ),
+  //                   borderSide: BorderSide(
+  //                     color: Color(0xffffffffff),
+  //                   ),
+  //                 ),
+  //                 labelStyle: TextStyle(
+  //                   fontSize: 17,
+  //                   color: Color(0xff46964a),
+  //                 ),
+  //                 focusedBorder: OutlineInputBorder(
+  //                   borderRadius: BorderRadius.all(Radius.circular(30)),
+  //                   borderSide: BorderSide(color: Colors.white),
+  //                 ),
+  //                 border: OutlineInputBorder(
+  //                   borderRadius: BorderRadius.all(
+  //                     Radius.circular(30),
+  //                   ),
+  //                 ),
+  //                 prefixIcon: Icon(
+  //                   Icons.search,
+  //                   color: Color(0xff46964a),
+  //                 ),
+  //               ),
+  //               value: selectedFinanceiro,
+  //               onChanged: (value) {
+  //                 setState(() {
+  //                   selectedFinanceiro = value;
+  //                 });
+  //               },
+  //               icon: const Icon(
+  //                 Icons.arrow_drop_down,
+  //                 color: Color(0xff46964a),
+  //               ),
+  //               isExpanded: true,
+  //               elevation: 16,
+  //               items: listaFinanceiro.map((item) {
+  //                 return DropdownMenuItem<String>(
+  //                   value: item,
+  //                   child: Text(
+  //                     item,
+  //                     style: const TextStyle(fontSize: 16, color: Colors.white),
+  //                   ),
+  //                 );
+  //               }).toList(),
   //             ),
   //           ),
-  //           const SizedBox(
-  //             width: 15,
+  //         ),
+  //       ),
+  //       Container(
+  //         child: IconButton(
+  //           onPressed: resetDropdown,
+  //           icon: const Icon(
+  //             Icons.refresh,
+  //             color: Colors.white,
+  //             size: 30,
   //           ),
-  //           Container(
-  //             padding: const EdgeInsets.only(left: 15),
-  //             height: 50,
-  //             width: 255,
-  //             decoration: BoxDecoration(
-  //               border: Border.all(color: Colors.white),
-  //               borderRadius: BorderRadius.circular(40),
-  //             ),
-  //             child: Row(
-  //               children: [
-  //                 Image.asset(
-  //                   'lib/image/icon.png',
-  //                   width: 20,
-  //                   height: 20,
-  //                 ),
-  //                 const SizedBox(
-  //                   width: 10,
-  //                 ),
-  //                 Text(
-  //                   listaFilhos[4],
-  //                   style: const TextStyle(color: Colors.white),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //           IconButton(
-  //             onPressed: () {},
-  //             icon: const Icon(
-  //               Icons.delete_forever,
-  //               color: Color(0xffF14D4D),
-  //               size: 30,
-  //             ),
-  //           ),
-  //           IconButton(
-  //             onPressed: () {
-  //               Navigator.push(
-  //                 context,
-  //                 MaterialPageRoute(
-  //                   builder: (context) => const ButtonSettings(),
-  //                 ),
-  //               );
-  //             },
-  //             icon: const Icon(Icons.edit, color: Colors.white, size: 30),
-  //           ),
-  //         ],
+  //         ),
+  //       ),
+  //       Container(
+  //         child: IconButton(
+  //           onPressed: () {
+  //             Navigator.push(
+  //               context,
+  //               MaterialPageRoute(
+  //                 builder: (context) => const widgetOneEdit(),
+  //               ),
+  //             );
+  //           },
+  //           icon: const Icon(Icons.edit, color: Colors.white, size: 30),
+  //         ),
   //       ),
   //     ],
   //   );

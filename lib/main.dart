@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wellu_project/screens/home.dart';
+import 'package:wellu_project/screens/assistentVirtual.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +12,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: HomePage(),
     );
   }
 }
+
