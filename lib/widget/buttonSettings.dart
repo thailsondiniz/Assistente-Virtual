@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wellu_project/controller/create_button.dart';
 import 'package:wellu_project/widget/itensProject.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -23,26 +24,26 @@ class _ButtonSettingsState extends State<ButtonSettings> {
   @override
   void initState() {
     super.initState();
-    fetchData();
+    // fetchData();
   }
 
-  void fetchData() async {
-  var url = Uri.parse('http://10.0.0.149:8000/api/projects');
+  // void fetchData() async {
+  //   var url = Uri.parse('http://10.0.0.149:8000/api/projects');
 
-  try {
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      var decodedData = json.decode(response.body);
-      setState(() {
-        apiData = List.from(decodedData);
-      });
-    } else {
-      print('Erro na requisição. Código de status: ${response.statusCode}');
-    }
-  } catch (error) {
-    print('Falha na requisição $error');
-  }
-}
+  //   try {
+  //     var response = await http.get(url);
+  //     if (response.statusCode == 200) {
+  //       var decodedData = json.decode(response.body);
+  //       setState(() {
+  //         apiData = List.from(decodedData);
+  //       });
+  //     } else {
+  //       print('Erro na requisição. Código de status: ${response.statusCode}');
+  //     }
+  //   } catch (error) {
+  //     print('Falha na requisição $error');
+  //   }
+  // }
 
   // final List<String> items = [
   //   'Projeto 1',
@@ -64,7 +65,7 @@ class _ButtonSettingsState extends State<ButtonSettings> {
 
   @override
   Widget build(BuildContext context) {
-    _textEditingController.text = "I m already a customer";
+    // _textEditingController.text = "I m already a customer";
     _textEditingController2.text =
         "One of our assistants will assisti you shortly";
 
@@ -100,7 +101,11 @@ class _ButtonSettingsState extends State<ButtonSettings> {
             color: const Color(0xff46964a),
             borderRadius: BorderRadius.circular(100)),
         child: IconButton(
-          onPressed: () {},
+          onPressed: () async {
+            var nome = _textEditingController.text;
+            CreateButton createButton = CreateButton();
+            createButton.createButton(nome);
+          },
           icon: const Icon(
             Icons.save,
             size: 30,
@@ -359,4 +364,3 @@ class _ButtonSettingsState extends State<ButtonSettings> {
     );
   }
 }
-

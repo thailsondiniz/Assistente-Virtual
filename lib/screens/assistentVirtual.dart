@@ -1,10 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
-import 'package:wellu_project/screens/menu.dart';
-import 'package:wellu_project/services/api.dart';
 import 'package:wellu_project/widget/buttonSettings.dart';
 import 'package:wellu_project/widget/cabecalho.dart';
 import 'package:wellu_project/widget/recomendacaoWidget.dart';
@@ -18,36 +14,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<dynamic> apiListButtons = [];
   List<String> dropdownItems = ['Select'];
+
   List<dynamic> sessaoList = [];
+
   String selectedValue = 'Select';
-  // String selectedValue2 = 'Select';
 
   List<dynamic> recomendacao = [];
 
-  List<dynamic> listaFilhos = [];
-
-  List<dynamic> filhoswidges = [];
-
   String? selectedFilho;
 
-  List<dynamic> listaFinanceiro = [];
-  String? selectedFinanceiro;
-
-  bool isSwitched = false;
-  bool isSwitched2 = false;
-
   List<String> id = [];
+
   List<String> nome = [];
+
   var data;
 
   fetchButtons() async {
+    // final apiUrl = Uri.parse('http://10.0.0.149:8000/api/buttons');
     final apiUrl = Uri.parse('http://10.0.0.149:8000/api/buttons');
     final response = await http.get(apiUrl);
     data = json.decode(response.body);
     setState(() {
-      for (var element in data['butoes']) {
+      for (var element in data) {
         dropdownItems.add(element['nome']);
         id.add(element['id']);
         recomendacao.add(element['nome']);
@@ -65,7 +54,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // requisicao();
     fetchButtons();
   }
 
@@ -162,9 +150,8 @@ class _HomePageState extends State<HomePage> {
                                   selectedValue = value.toString();
 
                                   if (dropdownItems.contains(selectedValue)) {
-                                            recomendacao.clear();
-
-                                    for (var element in data['butoes']) {
+                                    recomendacao.clear();
+                                    for (var element in data) {
                                       if (element['filhos'] != null) {
                                         for (var filhos in element['filhos']) {
                                           if (filhos['id_pai'] ==
@@ -368,208 +355,4 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
-
-  // Widget segundaSessao() {
-  //   return Row(
-  //     children: [
-  //       const Padding(
-  //         padding: EdgeInsets.only(left: 15),
-  //         child: Text(
-  //           textAlign: TextAlign.end,
-  //           '2',
-  //           style: TextStyle(
-  //               fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-  //         ),
-  //       ),
-  //       Expanded(
-  //         flex: 5,
-  //         child: SizedBox(
-  //           height: 60,
-  //           child: DropdownButtonHideUnderline(
-  //             child: DropdownButtonFormField<dynamic>(
-  //               padding: const EdgeInsets.only(left: 10),
-  //               dropdownColor: const Color(0xff424242),
-  //               decoration: const InputDecoration(
-  //                 labelText: 'Select',
-  //                 enabledBorder: OutlineInputBorder(
-  //                   borderRadius: BorderRadius.all(
-  //                     Radius.circular(70),
-  //                   ),
-  //                   borderSide: BorderSide(
-  //                     color: Color(0xffffffffff),
-  //                   ),
-  //                 ),
-  //                 labelStyle: TextStyle(
-  //                   fontSize: 17,
-  //                   color: Color(0xff46964a),
-  //                 ),
-  //                 focusedBorder: OutlineInputBorder(
-  //                   borderRadius: BorderRadius.all(Radius.circular(30)),
-  //                   borderSide: BorderSide(color: Colors.white),
-  //                 ),
-  //                 border: OutlineInputBorder(
-  //                   borderRadius: BorderRadius.all(
-  //                     Radius.circular(30),
-  //                   ),
-  //                 ),
-  //                 prefixIcon: Icon(
-  //                   Icons.search,
-  //                   color: Color(0xff46964a),
-  //                 ),
-  //               ),
-  //               value: selectedFilho,
-  //               onChanged: (value) {
-  //                 setState(() {
-  //                   selectedFilho = value.toString();
-  //                   recomendacao = listaFinanceiro;
-  //                   print(recomendacao);
-  //                   // print(listaFinanceiro);
-  //                   print(selectedFilho);
-  //                 });
-  //               },
-  //               icon: const Icon(
-  //                 Icons.arrow_drop_down,
-  //                 color: Color(0xff46964a),
-  //               ),
-  //               isExpanded: true,
-  //               elevation: 16,
-  //               items: listaFilhos.map((filho) {
-  //                 return DropdownMenuItem<dynamic>(
-  //                   value: filho,
-  //                   child: Text(
-  //                     filho,
-  //                     style: const TextStyle(fontSize: 16, color: Colors.white),
-  //                   ),
-  //                 );
-  //               }).toList(),
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //       Container(
-  //         child: IconButton(
-  //           onPressed: () {},
-  //           icon: const Icon(
-  //             Icons.refresh,
-  //             color: Colors.white,
-  //             size: 30,
-  //           ),
-  //         ),
-  //       ),
-  //       Container(
-  //         child: IconButton(
-  //           onPressed: () {
-  //             Navigator.push(
-  //               context,
-  //               MaterialPageRoute(
-  //                 builder: (context) => const widgetOneEdit(),
-  //               ),
-  //             );
-  //           },
-  //           icon: const Icon(Icons.edit, color: Colors.white, size: 30),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // Widget terceiraSessao() {
-  //   return Row(
-  //     children: [
-  //       const Padding(
-  //         padding: EdgeInsets.only(left: 15),
-  //         child: Text(
-  //           textAlign: TextAlign.end,
-  //           '3',
-  //           style: TextStyle(
-  //               fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-  //         ),
-  //       ),
-  //       Expanded(
-  //         flex: 5,
-  //         child: SizedBox(
-  //           height: 60,
-  //           child: DropdownButtonHideUnderline(
-  //             child: DropdownButtonFormField<dynamic>(
-  //               padding: const EdgeInsets.only(left: 10),
-  //               dropdownColor: const Color(0xff424242),
-  //               decoration: const InputDecoration(
-  //                 labelText: 'Select',
-  //                 enabledBorder: OutlineInputBorder(
-  //                   borderRadius: BorderRadius.all(
-  //                     Radius.circular(70),
-  //                   ),
-  //                   borderSide: BorderSide(
-  //                     color: Color(0xffffffffff),
-  //                   ),
-  //                 ),
-  //                 labelStyle: TextStyle(
-  //                   fontSize: 17,
-  //                   color: Color(0xff46964a),
-  //                 ),
-  //                 focusedBorder: OutlineInputBorder(
-  //                   borderRadius: BorderRadius.all(Radius.circular(30)),
-  //                   borderSide: BorderSide(color: Colors.white),
-  //                 ),
-  //                 border: OutlineInputBorder(
-  //                   borderRadius: BorderRadius.all(
-  //                     Radius.circular(30),
-  //                   ),
-  //                 ),
-  //                 prefixIcon: Icon(
-  //                   Icons.search,
-  //                   color: Color(0xff46964a),
-  //                 ),
-  //               ),
-  //               value: selectedFinanceiro,
-  //               onChanged: (value) {
-  //                 setState(() {
-  //                   selectedFinanceiro = value;
-  //                 });
-  //               },
-  //               icon: const Icon(
-  //                 Icons.arrow_drop_down,
-  //                 color: Color(0xff46964a),
-  //               ),
-  //               isExpanded: true,
-  //               elevation: 16,
-  //               items: listaFinanceiro.map((item) {
-  //                 return DropdownMenuItem<String>(
-  //                   value: item,
-  //                   child: Text(
-  //                     item,
-  //                     style: const TextStyle(fontSize: 16, color: Colors.white),
-  //                   ),
-  //                 );
-  //               }).toList(),
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //       Container(
-  //         child: IconButton(
-  //           onPressed: resetDropdown,
-  //           icon: const Icon(
-  //             Icons.refresh,
-  //             color: Colors.white,
-  //             size: 30,
-  //           ),
-  //         ),
-  //       ),
-  //       Container(
-  //         child: IconButton(
-  //           onPressed: () {
-  //             Navigator.push(
-  //               context,
-  //               MaterialPageRoute(
-  //                 builder: (context) => const widgetOneEdit(),
-  //               ),
-  //             );
-  //           },
-  //           icon: const Icon(Icons.edit, color: Colors.white, size: 30),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
 }
