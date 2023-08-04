@@ -2,6 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:wellu_project/widget/buttonSettings.dart';
 
 Widget recomendacaoWidget(recomedantion) {
+  print(recomedantion);
+
+  // List<int> indices = contas.asMap().keys.map((indice) => indice).toList();
+
+  // List<int> teste = [];
+  // for (int i = 0; i < contas.length; i++) {
+  //   teste.add(i + 1);
+  // }
+
+  // Widget meucontador(valor) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(left: 15),
+  //     child: Text(
+  //       valor.toString(),
+  //       textAlign: TextAlign.end,
+  //       style: const TextStyle(
+  //           fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
+  //     ),
+  //   );
+  // }
   return Builder(builder: (context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -10,10 +30,10 @@ Widget recomendacaoWidget(recomedantion) {
           const Padding(
             padding: EdgeInsets.only(left: 15),
             child: Text(
-              textAlign: TextAlign.end,
               '1',
+              textAlign: TextAlign.end,
               style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 17,
                   color: Colors.white,
                   fontWeight: FontWeight.bold),
             ),

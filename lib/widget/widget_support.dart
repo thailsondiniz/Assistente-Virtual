@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 
 import 'buttonSettings.dart';
 
-class widgetOneEdit extends StatefulWidget {
-  const widgetOneEdit({super.key});
+class WidgetSupportEdit extends StatefulWidget {
+  const WidgetSupportEdit({super.key});
 
   @override
-  State<widgetOneEdit> createState() => _widgetOneEditState();
+  State<WidgetSupportEdit> createState() => _WidgetSupportEditState();
 }
 
 TextEditingController _textEditingController = TextEditingController();
 
-class _widgetOneEditState extends State<widgetOneEdit> {
+class _WidgetSupportEditState extends State<WidgetSupportEdit> {
+  var activatedButton = 'Activated';
+  var disabledButton = 'Disabled';
+  var buttonVerification = false;
   @override
   Widget build(BuildContext context) {
     _textEditingController.text = "Greetings";
@@ -27,7 +30,7 @@ class _widgetOneEditState extends State<widgetOneEdit> {
           icon: const Icon(
             Icons.save,
             size: 30,
-            color: Color(0xfffffffff),
+            color: Color(0xFFFFFFFF),
           ),
         ),
       ),
@@ -75,6 +78,62 @@ class _widgetOneEditState extends State<widgetOneEdit> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Column(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              buttonVerification == false
+                                  ? buttonVerification = true
+                                  : buttonVerification = false;
+
+                              buttonVerification == true
+                                  ? disabledButton = 'Disabled'
+                                  : disabledButton = 'Activeted';
+                            });
+                          },
+                          icon: Icon(
+                            buttonVerification == true
+                                ? Icons.hide_source
+                                : Icons.check_circle,
+                            size: 32,
+                            color: buttonVerification == true
+                                ? const Color(0xffF14D4D)
+                                : Colors.green,
+                          ),
+                        ),
+                        Text(
+                          disabledButton,
+                          style: const TextStyle(
+                              color: Color(0xffffffff), fontSize: 17),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      width: 60,
+                    ),
+                    Column(
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.delete_forever,
+                            size: 32,
+                            color: Color(0xffF14D4D),
+                          ),
+                        ),
+                        const Text(
+                          'Delete',
+                          style: TextStyle(
+                            color: Color(0xffF14D4D),
+                            fontSize: 17,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      width: 70,
+                    ),
                     Column(
                       children: [
                         IconButton(
@@ -187,24 +246,18 @@ class _widgetOneEditState extends State<widgetOneEdit> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 20,
+                const Row(
+                  children: [
+                    SizedBox(
+                      width: 30,
+                      height: 20,
+                    ),
+                  ],
                 ),
                 Column(
                   children: [
                     Row(
                       children: [
-                        // const Padding(
-                        //   padding: EdgeInsets.only(left: 15),
-                        //   child: Text(
-                        //     textAlign: TextAlign.end,
-                        //     '1',
-                        //     style: TextStyle(
-                        //         fontSize: 18,
-                        //         color: Colors.white,
-                        //         fontWeight: FontWeight.bold),
-                        //   ),
-                        // ),
                         const SizedBox(
                           width: 25,
                         ),
@@ -256,17 +309,6 @@ class _widgetOneEditState extends State<widgetOneEdit> {
                     const SizedBox(height: 15),
                     Row(
                       children: [
-                        // const Padding(
-                        //   padding: EdgeInsets.only(left: 15),
-                        //   child: Text(
-                        //     textAlign: TextAlign.end,
-                        //     '2',
-                        //     style: TextStyle(
-                        //         fontSize: 18,
-                        //         color: Colors.white,
-                        //         fontWeight: FontWeight.bold),
-                        //   ),
-                        // ),
                         const SizedBox(
                           width: 25,
                         ),
@@ -313,29 +355,6 @@ class _widgetOneEditState extends State<widgetOneEdit> {
                     ),
                   ],
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //   children: [
-                //     const Padding(
-                //       padding: EdgeInsets.only(left:200, top:140),
-                //     ),
-                //     Container(
-                //       height:60,
-                //       width: 60,
-                //       decoration: BoxDecoration(
-                //           color: const Color(0xff46964a),
-                //           borderRadius: BorderRadius.circular(100)),
-                //       child: IconButton(
-                //         onPressed: () {},
-                //         icon: const Icon(
-                //           Icons.save,
-                //           size: 35,
-                //           color: Colors.white,
-                //         ),
-                //       ),
-                //     )
-                //   ],
-                // ),
               ],
             ),
           ),

@@ -11,11 +11,8 @@ button(buttonName) {
   return ElevatedButton(
     onPressed: () {},
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xff848484),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20)
-      )
-    ),
+        backgroundColor: const Color(0xff848484),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
     child: Text(buttonName),
   );
 }
@@ -23,8 +20,6 @@ button(buttonName) {
 class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
-    bool vitual = true;
-
     const soucliente = 'Sou Cliente';
     const saberMais = 'Saber Mais';
 

@@ -1,13 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
-import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:uuid/uuid.dart';
 import 'package:wellu_project/controller/create_button.dart';
-import 'package:wellu_project/widget/itensProject.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:wellu_project/screens/assistentVirtual.dart';
 
 class ButtonSettings extends StatefulWidget {
   const ButtonSettings({super.key});
@@ -24,35 +18,7 @@ class _ButtonSettingsState extends State<ButtonSettings> {
   @override
   void initState() {
     super.initState();
-    // fetchData();
   }
-
-  // void fetchData() async {
-  //   var url = Uri.parse('http://10.0.0.149:8000/api/projects');
-
-  //   try {
-  //     var response = await http.get(url);
-  //     if (response.statusCode == 200) {
-  //       var decodedData = json.decode(response.body);
-  //       setState(() {
-  //         apiData = List.from(decodedData);
-  //       });
-  //     } else {
-  //       print('Erro na requisição. Código de status: ${response.statusCode}');
-  //     }
-  //   } catch (error) {
-  //     print('Falha na requisição $error');
-  //   }
-  // }
-
-  // final List<String> items = [
-  //   'Projeto 1',
-  //   'Projeto 2',
-  //   'Projeto 3',
-  //   'Projeto 4',
-  //   'Projeto 5',
-  //   'Projeto 6',
-  // ];
 
   Object? selectedValue;
   final TextEditingController textEditingController3 = TextEditingController();
@@ -69,30 +35,6 @@ class _ButtonSettingsState extends State<ButtonSettings> {
     _textEditingController2.text =
         "One of our assistants will assisti you shortly";
 
-    //Lista de projetos
-    // const uuid = Uuid();
-
-    // final listProjects = [
-    //   Projects(id: uuid.v4(), name: "Projeto 1"),
-    //   Projects(id: uuid.v4(), name: "Projeto 2"),
-    //   Projects(id: uuid.v4(), name: "Projeto 3"),
-    // ];
-
-    // List<Projects?> projectSelection = [];
-
-    // int? selectedOption;
-    // String searchText = '';
-
-    // List<int> options = [1, 2, 3];
-    // List<int> filteredOptions = [1, 2, 3];
-    // void filterOptions() {
-    //   filteredOptions = options
-    //       .where((option) => 'Projeto $option'
-    //           .toLowerCase()
-    //           .contains(searchText.toLowerCase()))
-    //       .toList();
-    // }
-
     return Scaffold(
       floatingActionButton: Container(
         height: 60,
@@ -105,11 +47,17 @@ class _ButtonSettingsState extends State<ButtonSettings> {
             var nome = _textEditingController.text;
             CreateButton createButton = CreateButton();
             createButton.createButton(nome);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            );
           },
           icon: const Icon(
             Icons.save,
             size: 30,
-            color: Color(0xfffffffff),
+            color: Color(0xFFFFFFFF),
           ),
         ),
       ),

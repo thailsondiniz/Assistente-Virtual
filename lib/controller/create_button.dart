@@ -10,7 +10,7 @@ class CreateButton {
 
     var corpo = json.encode({
       'nome': name,
-      'filhos': filhos.toString(),
+      'filhos': filhos,
     });
 
     var response = await http.post(

@@ -3,8 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:wellu_project/widget/buttonSettings.dart';
 import 'package:wellu_project/widget/cabecalho.dart';
-import 'package:wellu_project/widget/recomendacaoWidget.dart';
-import 'package:wellu_project/widget/widgetOne.dart';
+import 'package:wellu_project/widget/widget_one.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,7 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   List<String> nome = [];
 
-  var data;
+  dynamic data;
 
   fetchButtons() async {
     // final apiUrl = Uri.parse('http://10.0.0.149:8000/api/buttons');
@@ -75,7 +74,7 @@ class _HomePageState extends State<HomePage> {
           },
           icon: const Icon(
             Icons.add,
-            color: Color(0xfffffffff),
+            color: Color(0xFFFFFFFF),
           ),
         ),
       ),
@@ -122,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                                     Radius.circular(70),
                                   ),
                                   borderSide: BorderSide(
-                                    color: Color(0xffffffffff),
+                                    color: Color(0xFFFFFFFF),
                                   ),
                                 ),
                                 labelStyle: TextStyle(
@@ -160,6 +159,7 @@ class _HomePageState extends State<HomePage> {
                                                   element['nome']) {
                                             recomendacao
                                                 .add(filhos['nome_filho']);
+                                            print(recomendacao);
                                           } else {}
                                         }
                                         sessaoList = recomendacao;
@@ -204,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const widgetOneEdit(),
+                              builder: (context) => const WidgetOneEdit(),
                             ),
                           );
                         },
@@ -247,9 +247,90 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            ...recomendacao.map((e) {
-              return recomendacaoWidget(e);
-            })
+            // ...recomendacao.map((e) {
+            //   List<int> indices =
+            //       recomendacao.asMap().keys.map((indice) => indice).toList();
+            //   print(indices);
+            //   // print(e);
+            //   return recomendacaoWidget(e);
+            // })
+            SizedBox(
+              height: 300,
+              child: ListView.builder(
+                padding: const EdgeInsets.only(bottom: 25),
+                itemCount: recomendacao.length,
+                itemBuilder: (context, index) {
+                  int displayIndex = index + 1;
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: Text(
+                            displayIndex.toString(),
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(
+                                fontSize: 17,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(left: 15),
+                          height: 50,
+                          width: 255,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(40)),
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                'lib/image/icon.png',
+                                width: 20,
+                                height: 20,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                recomendacao[index],
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            // print(dropdownItems);
+                          },
+                          icon: const Icon(
+                            Icons.delete_forever,
+                            color: Color(0xffF14D4D),
+                            size: 30,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ButtonSettings(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.edit,
+                              color: Colors.white, size: 30),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -283,7 +364,7 @@ class _HomePageState extends State<HomePage> {
                       Radius.circular(70),
                     ),
                     borderSide: BorderSide(
-                      color: Color(0xffffffffff),
+                      color: Color(0xFFFFFFFF),
                     ),
                   ),
                   labelStyle: TextStyle(
@@ -329,28 +410,24 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        Container(
-          child: IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.refresh,
-              color: Colors.white,
-              size: 30,
-            ),
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(
+            Icons.refresh,
+            color: Colors.white,
+            size: 30,
           ),
         ),
-        Container(
-          child: IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const widgetOneEdit(),
-                ),
-              );
-            },
-            icon: const Icon(Icons.edit, color: Colors.white, size: 30),
-          ),
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const WidgetOneEdit(),
+              ),
+            );
+          },
+          icon: const Icon(Icons.edit, color: Colors.white, size: 30),
         ),
       ],
     );

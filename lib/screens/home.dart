@@ -46,27 +46,27 @@ class _HomeState extends State<Home> {
         backgroundColor: const Color(0xff303030),
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon:  SvgPicture.asset(
+            icon: SvgPicture.asset(
               'lib/image/chat.svg',
               width: 25,
               color: Colors.white,
-              ),
+            ),
             label: '',
           ),
-           BottomNavigationBarItem(
-            icon:  SvgPicture.asset(
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
               'lib/image/groups.svg',
               width: 25,
               color: Colors.white,
-              ),
+            ),
             label: '',
           ),
-           BottomNavigationBarItem(
-            icon:  SvgPicture.asset(
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
               'lib/image/user.svg',
               width: 25,
               color: Colors.white,
-              ),
+            ),
             label: '',
           ),
         ],
